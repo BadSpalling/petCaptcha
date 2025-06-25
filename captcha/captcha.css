@@ -1,0 +1,166 @@
+#captchaWrapper{
+    background-image: url("mods.png");
+    width:390px;
+    height:300px;
+}
+
+.horizontalArrow {
+    position:absolute;
+    width: 200px;
+    height: 80px;
+    /*background: black;*/
+    left:100px;
+    top:100px;
+  }
+
+.arrowLeft {
+    position:absolute;
+    width: 0;
+    height: 0;
+    float: left;
+    border-top: 30px solid transparent;
+    border-right: 60px solid rgba(0, 128, 0, 0.596);
+    border-bottom: 30px solid transparent;
+    left:0px;
+    top:10px;
+  }
+
+.horizontalArrowBody {
+    position:absolute;
+    width: 80px;
+    height: 30px;
+    background: rgba(0, 128, 0, 0.596);
+    left:60px;
+    top:25px;
+    
+
+}
+
+.arrowRight {
+    position:absolute;
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-left: 60px solid rgba(0, 128, 0, 0.596);
+    border-bottom: 30px solid transparent;
+    left:140px;
+    top:10px;
+}
+
+#starId0 {
+    position:absolute;
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-left: 60px solid yellow;
+    transition: opacity 50%;
+    border-bottom: 30px solid transparent;
+    left:140px;
+    top:10px;
+    animation: fade 4s forwards 2, spin 5s linear infinite;
+}
+
+#starId1 {
+    position:absolute;
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-left: 60px solid yellow;
+    transition: opacity 50%;
+    border-bottom: 30px solid transparent;
+    left:140px;
+    top:10px;
+    animation: fade 4s forwards 1, spin 5s linear infinite;
+}
+
+#starId2 {
+    position:absolute;
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-left: 60px solid yellow;
+    transition: opacity 50%;
+    border-bottom: 30px solid transparent;
+    left:140px;
+    top:10px;
+    animation: fade 4s forwards 1, spin 5s linear infinite;
+}
+
+#starId3 {
+    position:absolute;
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-left: 60px solid yellow;
+    transition: opacity 50%;
+    border-bottom: 30px solid transparent;
+    left:140px;
+    top:10px;
+    animation: fade 4s forwards 1, spin 5s linear infinite;
+}
+
+#starId4 {
+    position:absolute;
+    width: 0;
+    height: 0;
+    border-top: 30px solid transparent;
+    border-left: 60px solid yellow;
+    transition: opacity 50%;
+    border-bottom: 30px solid transparent;
+    left:140px;
+    top:10px;
+    animation: fade 1.9s forwards 1, spin 5s linear infinite;
+}
+
+@keyframes spin {
+    0% { rotate: 0deg; }
+    100% { rotate: 360deg; }
+}
+
+@keyframes fade {
+    0% { border-left: 60px solid yellow; border-top: 30px solid transparent; border-bottom: 30px solid transparent; }
+    100% { border-left: 0px solid yellow; border-top: 0px solid transparent; border-bottom: 0px solid transparent; }
+}
+
+#speechBubbleId {
+    left:150px;
+    top: 10px;
+    height: 55px;
+    max-height: 55px;
+    width: 214;
+    max-width: 214;
+    background: #ddd;
+    color: #413c33;
+    display: inline-block;
+    font-size: 20px;
+
+    padding: 10px;
+    position: absolute;
+    text-align: center;
+    vertical-align: center;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    
+    border-radius: .4em;
+  }
+
+  #speechBubbleStartId {
+    left: 200px;
+    top:85px;
+    position: absolute;
+    width: 0; 
+    height: 0; 
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    
+    border-top: 20px solid #ddd;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+
+
+
+

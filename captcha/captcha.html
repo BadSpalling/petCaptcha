@@ -22,31 +22,121 @@
 
     /* Your style here... */
   </style>
+  <link rel="stylesheet" href="captcha.css">
 </head>
 
 <body>
   <div id="captcha-container">
     <!-- Add your CAPTCHA here: -->
-    Hello world!
+    <div id="captchaWrapper">
+      <div id="horizontalArrowId" class="horizontalArrow">
+        <div class="arrowLeft"></div>
+        <div class="horizontalArrowBody"></div>
+        <div class="arrowRight"></div>
+      </div>
+    <div id="speechBubbleStartId"></div>
+    <div id="speechBubbleId"></div>
+    </div>
 
-    <!-- We've added a sample button. Feel free to remove it: -->
-    <button id="solve">
-      Solve!
-    </button>
+    <div id="starId0"></div>
+    <!--<div id="starId1"></div>
+    <div id="starId2"></div>
+    <div id="starId3"></div>
+    <div id="starId4"></div>-->
+
   </div>
 
   <script type="text/javascript">
+
+    let cursorPositionX = 0;
+    let cursorPositionY = 0;
+    let petProgressionCounter = 0;
+    let lastMovementDate = new Date();
+    let remainingPetCounter = 3;
+    document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> times!";
+
     (function(window, document){
       // This is how you tell the parent window that the CAPTCHA was successful.
       function captchaSuccess() {
         window.top.postMessage("success", '*');
       }
 
+      // Track cursor position
+      document.addEventListener('mousemove', function(event) {
+          cursorPositionX = event.clientX;
+          cursorPositionY = event.clientY;
+
+      });
+
+      // Pet by moving the cursor inside of the marked area.
+      function petTheMods(){
+        let nowDate = new Date();
+
+        // wait some time between pet progression
+        // TOOD: eliminate magic number
+        if(nowDate.getTime() > lastMovementDate.getTime() + 1000)
+        {
+          lastMovementDate = new Date();
+          petProgressionCounter = petProgressionCounter + 1;
+          //TODO: Remove console logs
+          console.log(petProgressionCounter);  
+
+          
+          let animationCount = petProgressionCounter+ 1;
+          /*let nextStarId = "starId" + petProgressionCounter % 5;
+          console.log("nextStarId: " + nextStarId);
+          console.log("Animation Count: " + animationCount);*/
+
+          //let style = document.getElementById(nextStarId);
+          //TODO: Does not work as intended. How to create an animated star shape whenever a pet registers?
+          document.getElementById("starId0").setAttribute("style", "left: "+cursorPositionX+"px;top: "+cursorPositionY+"px; 60px solid yellow; border-top: 30px solid transparent; border-bottom: 30px solid transparent;animation: fade 1.9s forwards "+animationCount+", spin 5s linear infinite;")
+          //document.getElementById("starId0").classList.remove('starId0');
+          //document.getElementById("starId0").classList.add('starId0');
+
+          // Last pet is done, end captcha.
+          if(petProgressionCounter >= 5 && remainingPetCounter == 1){
+            document.getElementById("speechBubbleId").innerHTML = "Good Job, human!";
+            setTimeout(() => {
+              captchaSuccess();
+            }, 1000);
+            
+          }
+          // Progression counter is high enough count down remaining pets.
+          else if(petProgressionCounter >= 5)
+          {
+            petProgressionCounter = 0;
+            remainingPetCounter = remainingPetCounter - 1;
+
+            //document.getElementById('speechBubbleId').classList.add("hidden")
+            
+            if(remainingPetCounter == 1){
+              //TODO: Use variable, instead of calling it multiple times
+              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me one more time!";
+            }
+            else{
+              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> times!";
+            }
+            
+
+            //document.getElementById('speechBubbleId').classList.remove("hidden")
+
+          }
+        }
+        
+      }
+
       // Your CAPTCHA code goes here, we've added a simple example below:
-      document.getElementById('solve')
-           .addEventListener('click', () => captchaSuccess());
+      /*document.getElementById('solve')
+           .addEventListener('click', () => captchaSuccess());*/
+      
+      document.getElementById('horizontalArrowId')
+           .addEventListener('mousemove', () => petTheMods());
+
+           
 
     })(window, document);
+
+
   </script>
 </body>
 </html>
