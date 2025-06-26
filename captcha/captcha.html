@@ -49,6 +49,11 @@
   </div>
 
   <script type="text/javascript">
+    /* !!! READ ME !!!
+     * Adjust variable as desired.
+     * Total minimum time to solve the captcha is remainingPetCounter * petProgressionGoal * WAIT_TIME_BETWEEN_PET_PROGRESSION_MS
+     * !!! READ ME !!! */
+    
     // How many times the player needs to "pet" in order to solve the captcha. Player solves captcha when this value reaches 0.
     let remainingPetCounter = 3;
     // How many times player need to progress to finish this "pet". 
@@ -57,7 +62,10 @@
     const ANIMAL_NAME = "Mods";
 
     // How much time needs to pass, before movement within the marked area counts towards "pet progression". Value should equal or bigger than STAR_ANIMATION_TIME_MS.
-    const WAIT_TIME_BETWEEN_PET_PROGRESSION_MS = 900;
+    const MIN_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS = 900;
+    // "Pets" need to be between MIN_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS and MAX_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS to make sure,
+    //  that the player has to stay within the progression area. Value close to the minimum makes it harder for the player to solve the captcha with random movements.
+    const MAX_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS = 950;
     // If the player makes "pet progression", a star shape appears. Set how long this star is visible.
     const STAR_ANIMATION_TIME_MS = 700
 
@@ -77,6 +85,8 @@
 
     // Date/timestamp, when the player has last moved the cursor inside of the marked area
     let lastMovementDate = new Date();
+
+    let cursorInProgressionArea = false;
 
     const starEl = document.getElementById('starId')
     const speechBubbleEl = document.getElementById('speechBubbleId')
@@ -112,71 +122,87 @@
       // Pet by moving the cursor inside of the marked area.
       function petTheMods(){
         let nowDate = new Date();
+        if(cursorInProgressionArea === false){
+          cursorInProgressionArea = true;
+          return;
+        }
 
         // Wait some time between pet progression
-        if(nowDate.getTime() > lastMovementDate.getTime() + WAIT_TIME_BETWEEN_PET_PROGRESSION_MS)
-        { 
-          // Calculate position of the star. Make sure it is in the 300x390 frame.
-          let starX = cursorPositionX - 15;
-          let starY = cursorPositionY - 15;
-          if(starY >= WINDOW_SIZE_Y - DISTANCE_TO_WINDOW_BORDER){
-            starY = WINDOW_SIZE_Y - DISTANCE_TO_WINDOW_BORDER;
-          }
-          if(starY <= DISTANCE_TO_WINDOW_BORDER){
-            starY = DISTANCE_TO_WINDOW_BORDER;
-          }
-          if(starX >= WINDOW_SIZE_X - DISTANCE_TO_WINDOW_BORDER){
-            starX = WINDOW_SIZE_X - DISTANCE_TO_WINDOW_BORDER;
-          }
-          if(starX <= DISTANCE_TO_WINDOW_BORDER){
-            starX = DISTANCE_TO_WINDOW_BORDER;
-          } 
-        
-          starEl.classList.remove("hidden")
-          starEl.setAttribute("style", "left: "+starX+"px;top: "+starY+"px;")
-          setTimeout(hideStar, STAR_ANIMATION_TIME_MS);
-
-          // Increase progression counter and check if it is high enough to complete this "pet".
-          petProgressionCounter = petProgressionCounter + 1;   
-          
-          if(petProgressionCounter >= petProgressionGoal && remainingPetCounter == 1){
-            horizontalArrowEl.classList.add("hidden")
-            // Last pet is done, end captcha.
-            speechBubbleEl.innerHTML = "Good Job, human!";
-            setTimeout(() => {
-              captchaSuccess();
-            }, 2000);
-            
-          }
-          else if(petProgressionCounter >= petProgressionGoal)
-          {
-            // Progression counter is high enough count down remaining pets.
-            petProgressionCounter = 0;
-            remainingPetCounter = remainingPetCounter - 1;
-            
-            if(remainingPetCounter == 1){
-              speechBubbleEl.innerHTML = "Hi! My name is <b>"+ANIMAL_NAME+"</b>. <br> Pet me <b>1</b> more time!";
-            }
-            else{
-              speechBubbleEl.innerHTML = "Hi! My name is <b>"+ANIMAL_NAME+"</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> more times!";
-            }
-            
-            if(remainingPetCounter % 2 == 1){
-              horizontalArrowEl.classList.remove("hidden")
-              verticalArrowEl.classList.add("hidden")
-            }
-            else{
-              horizontalArrowEl.classList.add("hidden")
-              verticalArrowEl.classList.remove("hidden")
-            }
-          }
-
-          lastMovementDate = new Date();
+        if(nowDate.getTime() < lastMovementDate.getTime() + MIN_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS){
+          return;
         }
+
+        if(nowDate.getTime() > lastMovementDate.getTime() + MAX_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS){
+          lastMovementDate = new Date();
+          return;
+        }
+
+        // Calculate position of the star. Make sure it is in the 300x390 frame.
+        let starX = cursorPositionX - 15;
+        let starY = cursorPositionY - 15;
+        if(starY >= WINDOW_SIZE_Y - DISTANCE_TO_WINDOW_BORDER){
+          starY = WINDOW_SIZE_Y - DISTANCE_TO_WINDOW_BORDER;
+        }
+        if(starY <= DISTANCE_TO_WINDOW_BORDER){
+          starY = DISTANCE_TO_WINDOW_BORDER;
+        }
+        if(starX >= WINDOW_SIZE_X - DISTANCE_TO_WINDOW_BORDER){
+          starX = WINDOW_SIZE_X - DISTANCE_TO_WINDOW_BORDER;
+        }
+        if(starX <= DISTANCE_TO_WINDOW_BORDER){
+          starX = DISTANCE_TO_WINDOW_BORDER;
+        } 
+        
+        // Display star at cursor position
+        starEl.classList.remove("hidden")
+        starEl.setAttribute("style", "left: "+starX+"px;top: "+starY+"px;")
+        // Hide star again
+        setTimeout(hideStar, STAR_ANIMATION_TIME_MS);
+
+        // Increase progression counter and check if it is high enough to complete this "pet".
+        petProgressionCounter++;   
+          
+        if(petProgressionCounter >= petProgressionGoal && remainingPetCounter == 1){
+          horizontalArrowEl.classList.add("hidden")
+          // Last pet is done, end captcha.
+          speechBubbleEl.innerHTML = "Good Job, human!";
+          setTimeout(() => {
+            captchaSuccess();
+          }, 2000);
+            
+        }
+        else if(petProgressionCounter >= petProgressionGoal)
+        {
+          // Progression counter is high enough count down remaining pets.
+          petProgressionCounter = 0;
+          remainingPetCounter = remainingPetCounter - 1;
+            
+          if(remainingPetCounter == 1){
+            speechBubbleEl.innerHTML = "Hi! My name is <b>"+ANIMAL_NAME+"</b>. <br> Pet me <b>1</b> more time!";
+          }
+          else{
+            speechBubbleEl.innerHTML = "Hi! My name is <b>"+ANIMAL_NAME+"</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> more times!";
+          }
+           
+          if(remainingPetCounter % 2 == 1){
+            horizontalArrowEl.classList.remove("hidden")
+            verticalArrowEl.classList.add("hidden")
+          }
+          else{
+            horizontalArrowEl.classList.add("hidden")
+            verticalArrowEl.classList.remove("hidden")
+          }
+        }
+        lastMovementDate = new Date();
       }
 
       function hideStar(){
         starEl.classList.add("hidden");
+      }
+
+      function cursorLeftProgressionArea(){
+        cursorInProgressionArea = false;
+        console.log("LEFT");
       }
       
       horizontalArrowEl.addEventListener('mousemove', () => petTheMods());
