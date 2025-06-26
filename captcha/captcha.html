@@ -49,25 +49,52 @@
   </div>
 
   <script type="text/javascript">
+    // How many times the player needs to "pet" in order to solve the captcha. Player solves captcha when this value reaches 0.
+    let remainingPetCounter = 3;
+    // How many times player need to progress to finish this "pet". 
+    const petProgressionGoal = 7;
+    // Name of the animal
+    const ANIMAL_NAME = "Mods";
 
-    //var t = setInterval(runFunction,1000);
+    // How much time needs to pass, before movement within the marked area counts towards "pet progression". Value should equal or bigger than STAR_ANIMATION_TIME_MS.
+    const WAIT_TIME_BETWEEN_PET_PROGRESSION_MS = 900;
+    // If the player makes "pet progression", a star shape appears. Set how long this star is visible.
+    const STAR_ANIMATION_TIME_MS = 700
 
+    // How many times player has already progressed during this "pet". Resets after reaching value of petProgressionGoal.
+    let petProgressionCounter = 0;
+
+    // Window size
+    const WINDOW_SIZE_X = 390;
+    const WINDOW_SIZE_Y = 300;
+
+    // When placing a star shape, keep this distance to the border, so the star is fully visiable (and scroll bars do not appear)
+    const DISTANCE_TO_WINDOW_BORDER = 40;
+
+    // Current Position of the cursor
     let cursorPositionX = 0;
     let cursorPositionY = 0;
-    let petProgressionCounter = 0;
-    let lastMovementDate = new Date();
-    let remainingPetCounter = 3;
-    let petProgressionGoal = 7;
-    document.getElementById('starId').classList.add("hidden")
-    document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> times!";
 
+    // Date/timestamp, when the player has last moved the cursor inside of the marked area
+    let lastMovementDate = new Date();
+
+    const starEl = document.getElementById('starId')
+    const speechBubbleEl = document.getElementById('speechBubbleId')
+    const horizontalArrowEl = document.getElementById('horizontalArrowId')
+    const verticalArrowEl = document.getElementById('verticalArrowId')
+    
+    // Star is hidden at first
+    starEl.classList.add("hidden")
+    speechBubbleEl.innerHTML = "Hi! My name is <b>"+ANIMAL_NAME+"</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> times!";
+
+    // Choose one of the two marked areas
     if(remainingPetCounter % 2 == 1){
-      document.getElementById('horizontalArrowId').classList.remove("hidden")
-      document.getElementById('verticalArrowId').classList.add("hidden")
+      horizontalArrowEl.classList.remove("hidden")
+      verticalArrowEl.classList.add("hidden")
     }
     else{
-      document.getElementById('horizontalArrowId').classList.add("hidden")
-      document.getElementById('verticalArrowId').classList.remove("hidden")
+      horizontalArrowEl.classList.add("hidden")
+      verticalArrowEl.classList.remove("hidden")
     }
 
     (function(window, document){
@@ -80,98 +107,82 @@
       document.addEventListener('mousemove', function(event) {
           cursorPositionX = event.clientX;
           cursorPositionY = event.clientY;
-
       });
 
       // Pet by moving the cursor inside of the marked area.
       function petTheMods(){
         let nowDate = new Date();
 
-        // wait some time between pet progression
-        // TOOD: eliminate magic number
-        if(nowDate.getTime() > lastMovementDate.getTime() + 800)
-        {
-          lastMovementDate = new Date();
-          petProgressionCounter = petProgressionCounter + 1;
-          //TODO: Remove console logs
-          console.log(petProgressionCounter);  
-
-          
-          let animationCount = petProgressionCounter+ 1;
-          
+        // Wait some time between pet progression
+        if(nowDate.getTime() > lastMovementDate.getTime() + WAIT_TIME_BETWEEN_PET_PROGRESSION_MS)
+        { 
           // Calculate position of the star. Make sure it is in the 300x390 frame.
           let starX = cursorPositionX - 15;
           let starY = cursorPositionY - 15;
-          if(starY >= 260){
-            starY = 260;
+          if(starY >= WINDOW_SIZE_Y - DISTANCE_TO_WINDOW_BORDER){
+            starY = WINDOW_SIZE_Y - DISTANCE_TO_WINDOW_BORDER;
           }
-          if(starY <= 40){
-            starY = 40;
+          if(starY <= DISTANCE_TO_WINDOW_BORDER){
+            starY = DISTANCE_TO_WINDOW_BORDER;
           }
-          if(starX >= 350){
-            starX = 350;
+          if(starX >= WINDOW_SIZE_X - DISTANCE_TO_WINDOW_BORDER){
+            starX = WINDOW_SIZE_X - DISTANCE_TO_WINDOW_BORDER;
           }
-          if(starX <= 40){
-            starX = 40;
-          }
+          if(starX <= DISTANCE_TO_WINDOW_BORDER){
+            starX = DISTANCE_TO_WINDOW_BORDER;
+          } 
         
-          document.getElementById("starId").classList.remove("hidden")
-          document.getElementById("starId").setAttribute("style", "left: "+starX+"px;top: "+starY+"px;")
-          setTimeout(hideStar, 700);
+          starEl.classList.remove("hidden")
+          starEl.setAttribute("style", "left: "+starX+"px;top: "+starY+"px;")
+          setTimeout(hideStar, STAR_ANIMATION_TIME_MS);
 
-          // Last pet is done, end captcha.
+          // Increase progression counter and check if it is high enough to complete this "pet".
+          petProgressionCounter = petProgressionCounter + 1;   
+          
           if(petProgressionCounter >= petProgressionGoal && remainingPetCounter == 1){
-            document.getElementById('horizontalArrowId').classList.add("hidden")
-            document.getElementById("speechBubbleId").innerHTML = "Good Job, human!";
+            horizontalArrowEl.classList.add("hidden")
+            // Last pet is done, end captcha.
+            speechBubbleEl.innerHTML = "Good Job, human!";
             setTimeout(() => {
               captchaSuccess();
             }, 2000);
             
           }
-          // Progression counter is high enough count down remaining pets.
           else if(petProgressionCounter >= petProgressionGoal)
           {
+            // Progression counter is high enough count down remaining pets.
             petProgressionCounter = 0;
             remainingPetCounter = remainingPetCounter - 1;
             
             if(remainingPetCounter == 1){
-              //TODO: Use variable, instead of calling it multiple times
-              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>1</b> more time!";
+              speechBubbleEl.innerHTML = "Hi! My name is <b>"+ANIMAL_NAME+"</b>. <br> Pet me <b>1</b> more time!";
             }
             else{
-              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> more times!";
+              speechBubbleEl.innerHTML = "Hi! My name is <b>"+ANIMAL_NAME+"</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> more times!";
             }
             
-
             if(remainingPetCounter % 2 == 1){
-              document.getElementById('horizontalArrowId').classList.remove("hidden")
-              document.getElementById('verticalArrowId').classList.add("hidden")
+              horizontalArrowEl.classList.remove("hidden")
+              verticalArrowEl.classList.add("hidden")
             }
             else{
-              document.getElementById('horizontalArrowId').classList.add("hidden")
-              document.getElementById('verticalArrowId').classList.remove("hidden")
+              horizontalArrowEl.classList.add("hidden")
+              verticalArrowEl.classList.remove("hidden")
             }
           }
+
+          lastMovementDate = new Date();
         }
-        
       }
 
       function hideStar(){
-        document.getElementById("starId").classList.add("hidden");
+        starEl.classList.add("hidden");
       }
-
-      // Your CAPTCHA code goes here, we've added a simple example below:
-      /*document.getElementById('solve')
-           .addEventListener('click', () => captchaSuccess());*/
       
-      document.getElementById('horizontalArrowId')
-           .addEventListener('mousemove', () => petTheMods());
-      document.getElementById('verticalArrowId')
-           .addEventListener('mousemove', () => petTheMods());
-         
+      horizontalArrowEl.addEventListener('mousemove', () => petTheMods());
+      verticalArrowEl.addEventListener('mousemove', () => petTheMods());
 
     })(window, document);
-
 
   </script>
 </body>
