@@ -43,14 +43,10 @@
     <div id="speechBubbleId"></div>
     <div id="starId"></div>
   </div>
-
-    
-
-  </div>
-
+  
   <script type="text/javascript">
     /* !!! READ ME !!!
-     * Adjust variable as desired.
+     * Adjust the variables below as desired.
      * Total minimum time to solve the captcha is remainingPetCounter * petProgressionGoal * WAIT_TIME_BETWEEN_PET_PROGRESSION_MS
      * !!! READ ME !!! */
     
@@ -66,8 +62,13 @@
     // "Pets" need to be between MIN_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS and MAX_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS to make sure,
     //  that the player has to stay within the progression area. Value close to the minimum makes it harder for the player to solve the captcha with random movements.
     const MAX_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS = 950;
-    // If the player makes "pet progression", a star shape appears. Set how long this star is visible.
+    // If the player makes "pet progression", a star shape appears. Set how long this star is visible. Only one star can be at the screen. 
+    // Should be lower than MIN_WAIT_TIME_BETWEEN_PET_PROGRESSION_MS.
     const STAR_ANIMATION_TIME_MS = 700
+
+
+    /* !!! End of adjustable Variables !! */
+
 
     // How many times player has already progressed during this "pet". Resets after reaching value of petProgressionGoal.
     let petProgressionCounter = 0;
