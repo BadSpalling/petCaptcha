@@ -8,9 +8,9 @@
     position:absolute;
     width: 200px;
     height: 80px;
-    /*background: black;*/
     left:100px;
     top:100px;
+    animation: fadeOpacity 3s;
   }
 
 .arrowLeft {
@@ -32,8 +32,6 @@
     background: rgba(0, 128, 0, 0.596);
     left:60px;
     top:25px;
-    
-
 }
 
 .arrowRight {
@@ -47,46 +45,47 @@
     top:10px;
 }
 
-#starId0 {
+.verticalArrow {
+    position:absolute;
+    width: 70px;
+    height: 170px;
+    left:160px;
+    top:110px;
+    animation: fadeOpacity 3s;
+  }
+
+.arrowUp {
     position:absolute;
     width: 0;
     height: 0;
-    border-top: 30px solid transparent;
-    border-left: 60px solid yellow;
-    transition: opacity 50%;
-    border-bottom: 30px solid transparent;
-    left:140px;
-    top:10px;
-    animation: fade 4s forwards 2, spin 5s linear infinite;
+    border-left: 30px solid transparent;
+    border-bottom: 60px solid rgba(0, 128, 0, 0.596);
+    border-right: 30px solid transparent;
+    left:5px;
+    top:0px;
 }
 
-#starId1 {
+.arrowDown {
     position:absolute;
     width: 0;
     height: 0;
-    border-top: 30px solid transparent;
-    border-left: 60px solid yellow;
-    transition: opacity 50%;
-    border-bottom: 30px solid transparent;
-    left:140px;
-    top:10px;
-    animation: fade 4s forwards 1, spin 5s linear infinite;
+    border-left: 30px solid transparent;
+    border-top: 60px solid rgba(0, 128, 0, 0.596);
+    border-right: 30px solid transparent;
+    left:5px;
+    top:110px;
 }
 
-#starId2 {
+.verticalArrowBody {
     position:absolute;
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-left: 60px solid yellow;
-    transition: opacity 50%;
-    border-bottom: 30px solid transparent;
-    left:140px;
-    top:10px;
-    animation: fade 4s forwards 1, spin 5s linear infinite;
+    width: 30px;
+    height: 50px;
+    background: rgba(0, 128, 0, 0.596);
+    left:20px;
+    top:60px;
 }
 
-#starId3 {
+/*#starId {
     position:absolute;
     width: 0;
     height: 0;
@@ -96,31 +95,46 @@
     border-bottom: 30px solid transparent;
     left:140px;
     top:10px;
-    animation: fade 4s forwards 1, spin 5s linear infinite;
+    animation: spin 5s linear infinite;
+}*/
+
+#starId {
+    position:absolute;
+    width: 30px;  
+    aspect-ratio: 1;
+    background: #ffd900;
+    clip-path: polygon(50% 0,
+        calc(50%*(1 + sin(.4turn))) calc(50%*(1 - cos(.4turn))),
+        calc(50%*(1 - sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+        calc(50%*(1 + sin(.2turn))) calc(50%*(1 - cos(.2turn))),
+        calc(50%*(1 - sin(.4turn))) calc(50%*(1 - cos(.4turn))) 
+    ); 
+    animation: spin 5s linear infinite, glow 2s linear infinite;
 }
 
-#starId4 {
-    position:absolute;
-    width: 0;
-    height: 0;
-    border-top: 30px solid transparent;
-    border-left: 60px solid yellow;
-    transition: opacity 50%;
-    border-bottom: 30px solid transparent;
-    left:140px;
-    top:10px;
-    animation: fade 1.9s forwards 1, spin 5s linear infinite;
-}
+
 
 @keyframes spin {
     0% { rotate: 0deg; }
     100% { rotate: 360deg; }
 }
 
-@keyframes fade {
-    0% { border-left: 60px solid yellow; border-top: 30px solid transparent; border-bottom: 30px solid transparent; }
-    100% { border-left: 0px solid yellow; border-top: 0px solid transparent; border-bottom: 0px solid transparent; }
+@keyframes moveTopLeft {
+    0% { left: 0px; }
+    100% { left: 100px; }
 }
+
+@keyframes fadeOpacity {
+    0% { opacity: 0%; }
+    100% { opacity: 100%; }
+}
+
+@keyframes glow {
+    0% { opacity: 70%; }
+    50% { opacity: 25%; }
+    100% { opacity: 70%; }
+}
+
 
 #speechBubbleId {
     left:150px;

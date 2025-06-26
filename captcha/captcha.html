@@ -34,26 +34,41 @@
         <div class="horizontalArrowBody"></div>
         <div class="arrowRight"></div>
       </div>
+      <div id="verticalArrowId" class="verticalArrow">
+        <div class="arrowUp"></div>
+        <div class="verticalArrowBody"></div>
+        <div class="arrowDown"></div>
+      </div>
     <div id="speechBubbleStartId"></div>
     <div id="speechBubbleId"></div>
-    </div>
+    <div id="starId"></div>
+  </div>
 
-    <div id="starId0"></div>
-    <!--<div id="starId1"></div>
-    <div id="starId2"></div>
-    <div id="starId3"></div>
-    <div id="starId4"></div>-->
+    
 
   </div>
 
   <script type="text/javascript">
+
+    //var t = setInterval(runFunction,1000);
 
     let cursorPositionX = 0;
     let cursorPositionY = 0;
     let petProgressionCounter = 0;
     let lastMovementDate = new Date();
     let remainingPetCounter = 3;
+    let petProgressionGoal = 7;
+    document.getElementById('starId').classList.add("hidden")
     document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> times!";
+
+    if(remainingPetCounter % 2 == 1){
+      document.getElementById('horizontalArrowId').classList.remove("hidden")
+      document.getElementById('verticalArrowId').classList.add("hidden")
+    }
+    else{
+      document.getElementById('horizontalArrowId').classList.add("hidden")
+      document.getElementById('verticalArrowId').classList.remove("hidden")
+    }
 
     (function(window, document){
       // This is how you tell the parent window that the CAPTCHA was successful.
@@ -74,7 +89,7 @@
 
         // wait some time between pet progression
         // TOOD: eliminate magic number
-        if(nowDate.getTime() > lastMovementDate.getTime() + 1000)
+        if(nowDate.getTime() > lastMovementDate.getTime() + 800)
         {
           lastMovementDate = new Date();
           petProgressionCounter = petProgressionCounter + 1;
@@ -83,46 +98,66 @@
 
           
           let animationCount = petProgressionCounter+ 1;
-          /*let nextStarId = "starId" + petProgressionCounter % 5;
-          console.log("nextStarId: " + nextStarId);
-          console.log("Animation Count: " + animationCount);*/
-
-          //let style = document.getElementById(nextStarId);
-          //TODO: Does not work as intended. How to create an animated star shape whenever a pet registers?
-          document.getElementById("starId0").setAttribute("style", "left: "+cursorPositionX+"px;top: "+cursorPositionY+"px; 60px solid yellow; border-top: 30px solid transparent; border-bottom: 30px solid transparent;animation: fade 1.9s forwards "+animationCount+", spin 5s linear infinite;")
-          //document.getElementById("starId0").classList.remove('starId0');
-          //document.getElementById("starId0").classList.add('starId0');
+          
+          // Calculate position of the star. Make sure it is in the 300x390 frame.
+          let starX = cursorPositionX - 15;
+          let starY = cursorPositionY - 15;
+          if(starY >= 260){
+            starY = 260;
+          }
+          if(starY <= 40){
+            starY = 40;
+          }
+          if(starX >= 350){
+            starX = 350;
+          }
+          if(starX <= 40){
+            starX = 40;
+          }
+        
+          document.getElementById("starId").classList.remove("hidden")
+          document.getElementById("starId").setAttribute("style", "left: "+starX+"px;top: "+starY+"px;")
+          setTimeout(hideStar, 700);
 
           // Last pet is done, end captcha.
-          if(petProgressionCounter >= 5 && remainingPetCounter == 1){
+          if(petProgressionCounter >= petProgressionGoal && remainingPetCounter == 1){
+            document.getElementById('horizontalArrowId').classList.add("hidden")
             document.getElementById("speechBubbleId").innerHTML = "Good Job, human!";
             setTimeout(() => {
               captchaSuccess();
-            }, 1000);
+            }, 2000);
             
           }
           // Progression counter is high enough count down remaining pets.
-          else if(petProgressionCounter >= 5)
+          else if(petProgressionCounter >= petProgressionGoal)
           {
             petProgressionCounter = 0;
             remainingPetCounter = remainingPetCounter - 1;
-
-            //document.getElementById('speechBubbleId').classList.add("hidden")
             
             if(remainingPetCounter == 1){
               //TODO: Use variable, instead of calling it multiple times
-              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me one more time!";
+              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>1</b> more time!";
             }
             else{
-              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> times!";
+              document.getElementById("speechBubbleId").innerHTML = "Hi! My name is <b>Mods</b>. <br> Pet me <b>"+remainingPetCounter+"</b></div> more times!";
             }
             
 
-            //document.getElementById('speechBubbleId').classList.remove("hidden")
-
+            if(remainingPetCounter % 2 == 1){
+              document.getElementById('horizontalArrowId').classList.remove("hidden")
+              document.getElementById('verticalArrowId').classList.add("hidden")
+            }
+            else{
+              document.getElementById('horizontalArrowId').classList.add("hidden")
+              document.getElementById('verticalArrowId').classList.remove("hidden")
+            }
           }
         }
         
+      }
+
+      function hideStar(){
+        document.getElementById("starId").classList.add("hidden");
       }
 
       // Your CAPTCHA code goes here, we've added a simple example below:
@@ -131,8 +166,9 @@
       
       document.getElementById('horizontalArrowId')
            .addEventListener('mousemove', () => petTheMods());
-
-           
+      document.getElementById('verticalArrowId')
+           .addEventListener('mousemove', () => petTheMods());
+         
 
     })(window, document);
 
